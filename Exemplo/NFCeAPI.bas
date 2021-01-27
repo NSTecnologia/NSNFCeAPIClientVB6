@@ -99,7 +99,7 @@ Public Function emitirNFCeSincrono(conteudo As String, tpConteudo As String, tpA
             
         End If
         
-    ElseIf (status = "-995") Then
+    ElseIf (statusEnvio = "-995") Then
 
         motivo = LerDadosJSON(resposta, "motivo", "", "")
         erros = LerDadosJSON(resposta, "erros", "", "")
