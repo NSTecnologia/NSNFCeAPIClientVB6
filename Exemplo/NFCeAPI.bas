@@ -6,7 +6,7 @@ Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (By
 'Atributo privado da classe
 Private Const tempoResposta = 500
 Private Const impressaoParam = """impressao"":{" & """tipo"":""pdf""," & """ecologica"":false," & """itemLinhas"":""1""," & """itemDesconto"":false," & """larguraPapel"":""80mm""}"
-Private Const token = "SEU_TOKEN"
+Private Const token = "SEU_TOKEN_AQUI"
 
 'Esta fun��o envia um conte�do para uma URL, em requisi��es do tipo POST
 Function enviaConteudoParaAPI(conteudo As String, url As String, tpConteudo As String) As String
@@ -46,7 +46,7 @@ SAI:
 End Function
 
 'Esta fun��o realiza o processo completo de emiss�oo: envio e download do documento
-Public Function emitirNFCeSincrono(conteudo As String, tpConteudo As String, tpAmb As String, caminho As String, exibeNaTela As Boolean) As String
+Public Function emitirNFCeSincrono(conteudo As String, tpConteudo As String, tpAmb As String, caminho As String, exibeNaTela As Boolean, imprimePDF As Boolean) As String
     Dim retorno As String
     Dim resposta As String
     Dim statusEnvio As String
@@ -84,7 +84,7 @@ Public Function emitirNFCeSincrono(conteudo As String, tpConteudo As String, tpA
 
             Sleep (tempoResposta)
 
-            resposta = downloadNFCeESalvar(chNFe, tpAmb, caminho, exibeNaTela)
+            resposta = downloadNFCeESalvar(chNFe, tpAmb, caminho, exibeNaTela, imprimePDF)
             statusDownload = LerDadosJSON(resposta, "status", "", "")
             
             'Testa se houve problema no download
@@ -189,7 +189,7 @@ Public Function downloadNFCe(chNFe As String, tpAmb As String) As String
 End Function
 
 'Esta fun��o realiza o download de documentos de uma NFC-e e salva-os
-Public Function downloadNFCeESalvar(chNFe As String, tpAmb As String, caminho As String, exibeNaTela As Boolean) As String
+Public Function downloadNFCeESalvar(chNFe As String, tpAmb As String, caminho As String, exibeNaTela As Boolean, imprimePDF As Boolean) As String
 
     Dim xml As String
     Dim pdf As String
@@ -216,9 +216,16 @@ Public Function downloadNFCeESalvar(chNFe As String, tpAmb As String, caminho As
             
             If exibeNaTela Then
             
-                ShellExecute 0, "open", caminho & chNFe & "-procNFCe.pdf", "", "", vbNormalFocus
+                ShellExecute 0, "open", caminho & chNFe & "-procNFe.pdf", "", "", vbNormalFocus
             
             End If
+
+            If imprimePDF Then
+
+                Call imprimirNFCe(caminho, chNFe)
+            
+            End If
+
         End If
     Else
         MsgBox ("Ocorreu um erro, veja o Retorno da API para mais informa��es")
@@ -542,3 +549,11 @@ Public Sub gravaLinhaLog(conteudoSalvar As String)
     Print #fnum, data & " - " & conteudoSalvar
     Close fnum
 End Sub
+
+'Esta função imprime o cupom fiscal diretamente na impressora padrão do windows
+Public Function imprimirNFCe(caminho As String, chNFe As String) As Long
+    Dim impressao_aux As Long
+
+    impressao_aux = ShellExecute(0, "print", caminho & chNFe & "-procNFe.pdf", vbNullString, vbNullString, vbNormalFocus)
+    'recomendamos utilizar o leitor de PDF PDF-XChange por motivos de compatibilidade com o código em questão
+End Function

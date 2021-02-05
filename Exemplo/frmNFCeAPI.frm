@@ -11,6 +11,15 @@ Begin VB.Form frmNFCeAPI
    MinButton       =   0   'False
    ScaleHeight     =   9300
    ScaleWidth      =   10500
+   Begin VB.CheckBox checkImprime 
+      Caption         =   "Imprimir PDF"
+      Height          =   195
+      Left            =   1530
+      TabIndex        =   11
+      Top             =   5550
+      Value           =   1  'Checked
+      Width           =   1200
+   End
    Begin VB.TextBox txtCaminho 
       Height          =   315
       Left            =   120
@@ -123,7 +132,7 @@ Private Sub cmdEnviar_Click()
     If (txtCaminho.Text <> "") And (txtConteudo.Text <> "") And (cbTpConteudo.Text <> "") And (txtTpAmb.Text <> "") Then
         
         'Faz a emissão síncrona
-        retorno = emitirNFCeSincrono(txtConteudo.Text, cbTpConteudo.Text, txtTpAmb.Text, txtCaminho.Text, checkExibir.Value)
+        retorno = emitirNFCeSincrono(txtConteudo.Text, cbTpConteudo.Text, txtTpAmb.Text, txtCaminho.Text, checkExibir.Value, checkImprime.Value)
         txtResult.Text = retorno
         
         'Abaixo, confira um exemplo de tratamento de retorno da função emitirNFCeSincrono
