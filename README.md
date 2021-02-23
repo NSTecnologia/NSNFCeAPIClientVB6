@@ -1,6 +1,6 @@
-# NSNFCeAPIClientVB6
+# NSNF3eAPIClientVB6
 
-Esta página apresenta trechos de códigos de um módulo em VB6 que foi desenvolvido para consumir as funcionalidades da NS NFC-e API.
+Esta página apresenta trechos de códigos de um módulo em VB6 que foi desenvolvido para consumir as funcionalidades da NS NF3e API.
 
 -------
 
@@ -11,11 +11,11 @@ Esta página apresenta trechos de códigos de um módulo em VB6 que foi desenvol
 Para utilizar as funções de comunicação com a API, você precisa realizar os seguintes passos:
 
 1. Extraia o conteúdo da pasta compactada que você baixou;
-2. Copie para a pasta da sua aplicação os módulos **NFCeAPI.bas** e **base64Convert.bas**, que estão na pasta raiz;
+2. Copie para a pasta da sua aplicação os módulos **NF3eAPI.bas** e **base64Convert.bas**, que estão na pasta raiz;
 3. Abra o seu projeto e importe a pasta copiada.
 4.A aplicação utiliza as bibliotecas **Microsoft Script Control 1.0** e **Active Microsoft XML, v6.0** para realizar a comunicação com a API e fazer a manipulação de dados JSON, respectivamente. Ative as duas referencias em: **Project > References**. 
 
-**Pronto!** Agora, você já pode consumir a NS NFC-e API através do seu sistema. Todas as funcionalidades de comunicação foram implementadas no módulo NFCeAPI.bas. Confira abaixo sobre realizar uma emissão completa.
+**Pronto!** Agora, você já pode consumir a NS NF3e API através do seu sistema. Todas as funcionalidades de comunicação foram implementadas no módulo NF3eAPI.bas. Confira abaixo sobre realizar uma emissão completa.
 
 ------
 
@@ -23,11 +23,11 @@ Para utilizar as funções de comunicação com a API, você precisa realizar os
 
 ### Realizando uma Emissão:
 
-Para realizar uma emissão completa, você poderá utilizar a função emitirNFCeSincrono do módulo NFCeAPI. Veja abaixo sobre os parâmetros necessários, e um exemplo de chamada do método.
+Para realizar uma emissão completa, você poderá utilizar a função emitirNF3eSincrono do módulo NF3eAPI. Veja abaixo sobre os parâmetros necessários, e um exemplo de chamada do método.
 
 ##### Parâmetros:
 
-**ATENÇÃO:** o **token** também é um parâmetro necessário e você deve primeiramente defini-lo no módulo NFCeAPI.bas. Ele é uma constante do módulo. 
+**ATENÇÃO:** o **token** também é um parâmetro necessário e você deve primeiramente defini-lo no módulo NF3eAPI.bas. Ele é uma constante do módulo. 
 
 Parametros     | Descrição
 :-------------:|:-----------
@@ -42,10 +42,10 @@ exibeNaTela    | Se for baixado, exibir o PDF na tela após a autorização.Valo
 Após ter todos os parâmetros listados acima, você deverá fazer a chamada da função. Veja o código de exemplo abaixo:
            
     Dim retorno As String
-    retorno = emitirNFCeSincrono(conteudoEnviar, "json", "2", "C:\Documentos", True)
+    retorno = emitirNF3eSincrono(conteudoEnviar, "json", "2", "C:\Documentos", True)
     MessageBox(retorno)
 
-A função **emitirNFCeSincrono** fará o envio, a consulta e download do documento, utilizando as funções emitirNFe, consultarStatusProcessamento e downloadNFeAndSave, presentes no módulo NFeAPI.bas. Por isso, o retorno será um JSON com os principais campos retornados pelos métodos citados anteriormente. No exemplo abaixo, veja como tratar o retorno da função emitirNFeSincrono:
+A função **emitirNF3eSincrono** fará o envio, a consulta e download do documento, utilizando as funções emitirNFe, consultarStatusProcessamento e downloadNFeAndSave, presentes no módulo NFeAPI.bas. Por isso, o retorno será um JSON com os principais campos retornados pelos métodos citados anteriormente. No exemplo abaixo, veja como tratar o retorno da função emitirNFeSincrono:
 
 ##### Exemplo de tratamento de retorno:
 
@@ -64,7 +64,7 @@ O JSON retornado pelo método terá os seguintes campos: statusEnvio, statusDown
 Confira um código para tratamento do retorno, no qual pegará as informações dispostas no JSON de Retorno disponibilizado:
 
     Dim retorno As String
-    retorno = emitirNFCeSincrono(conteudoEnviar, "json", "2", "C:\Documentos", True)
+    retorno = emitirNF3eSincrono(conteudoEnviar, "json", "2", "C:\Documentos", True)
 
     Dim statusEnvio, statusDownload, cStat, chNFe, nProt, motivo, erros As String
 
@@ -109,14 +109,12 @@ No módulo NFeAPI, você pode encontrar também as seguintes funcionalidades:
 NOME                     | FINALIDADE             | DOCUMENTAÇÂO CONFLUENCE
 :-----------------------:|:----------------------:|:-----------------------
 **enviaConteudoParaAPI** |Função genérica que envia um conteúdo para API. Requisições do tipo POST.|
-**emitirNFCe** | Envia uma NFC-e para processamento.|[Emissão de NFC-e](https://confluence.ns.eti.br/pages/viewpage.action?pageId=19988502#Emiss%C3%A3onaNSNFC-eAPI-Emiss%C3%A3odeNFC-e).
-**downloadNFCe** | Baixa documentos de emissão de uma NFC-e autorizada. | [Download da NFC-e](https://confluence.ns.eti.br/display/PUB/Download+na+NS+NFC-e+API#DownloadnaNSNFC-eAPI-eAPI-DownloaddaNFC-e)
-**downloadNFCeESalvar** | Baixa documentos de emissão de uma NFC-e autorizada e salva-os em um diretório. | Por utilizar o método downloadNFCe, a documentação é a mesma. 
-**downloadEventoNFCeESalvar** | Baixa documentos de evento de uma NFC-e autorizada e salva-os em um diretório. | Por utilizar o método downloadNFCe, a documentação é a mesma. 
-**cancelarNFCe** | Realiza o cancelamento de uma NFC-e. | [Cancelamento de NFC-e](https://confluence.ns.eti.br/display/PUB/Cancelamento+na+NS+NFC-e+API).
-**consultarSituacao** | Consulta a situação de uma NFC-e na Sefaz. | [Consulta Situação da NFC-e](https://confluence.ns.eti.br/pages/viewpage.action?pageId=20381719#ConsultadeSitua%C3%A7%C3%A3odeNFC-enaNSNFC-eAPI-ConsultaSitua%C3%A7%C3%A3odaNFC-e).
-**enviarEmail** | Envia NFC-e por e-mail. (Para enviar mais de um e-mail, separe os endereços por vírgula). | [Envio de NFC-e por E-mail](https://confluence.ns.eti.br/display/PUB/Envio+de+NFC-e+por+E-mail+na+NS+NFC-e+API).
-**inutilizar** | Inutiliza numerações de NFC-e. | [Inutilização de Numeração](https://confluence.ns.eti.br/pages/viewpage.action?pageId=20381734).
+**emitirNF3e** | Envia uma NF3-e para processamento.|[Emissão de NF3e]().
+**downloadNF3e** | Baixa documentos de emissão de uma NF3e autorizada. | [Download da NF3e]()
+**downloadNF3eESalvar** | Baixa documentos de emissão de uma NF3e autorizada e salva-os em um diretório. | Por utilizar o método downloadNF3e, a documentação é a mesma. 
+**downloadEventoNF3eESalvar** | Baixa documentos de evento de uma NF3e autorizada e salva-os em um diretório. | Por utilizar o método downloadNF3e, a documentação é a mesma. 
+**cancelarNF3e** | Realiza o cancelamento de uma NF3-e. | [Cancelamento de NF3e]().
+**consultarSituacao** | Consulta a situação de uma NFC-e na Sefaz. | [Consulta Situação da NF3e]().
 **salvarXML** | Salva um XML em um diretório. | 
 **salvarJSON** | Salva um JSON em um diretório. |
 **salvarPDF** |	Salva um PDF em um diretório. | 
