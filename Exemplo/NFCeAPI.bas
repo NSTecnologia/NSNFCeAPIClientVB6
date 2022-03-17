@@ -277,6 +277,76 @@ Public Function downloadEventoNFCeESalvar(chNFe As String, tpAmb As String, cami
     downloadEventoNFCeESalvar = resposta
 End Function
 
+Public Function downloadInutilizacaoNFCe(idInut As String, tpAmb As String) As String
+
+    Dim json As String
+    Dim url As String
+    Dim xml As String
+    Dim caminho As String
+    Dim resposta As String
+    Dim status As String
+
+    'Monta o JSON
+    json = "{"
+    json = json & """idInut"":""" & idInut & ""","
+    json = json & """tpAmb"":""" & tpAmb & """"
+    json = json & "}"
+
+    url = "https://nfce.ns.eti.br/v1/nfce/get/inut"
+
+    gravaLinhaLog ("[DOWNLOAD_INUTILIZACAO_NFCE_DADOS]")
+    gravaLinhaLog (json)
+        
+    resposta = enviaConteudoParaAPI(json, url, "json")
+    
+    status = LerDadosJSON(resposta, "status", "", "")
+        
+    'O retorno da API ser�o gravado somente em caso de erro,
+    'para n�o gerar um log extenso com o PDF e XML
+    If (status = "200") Then
+    
+        gravaLinhaLog ("[DOWNLOAD_INUTILIZACAO_NFCE_RESPOSTA]")
+        gravaLinhaLog (resposta)
+        
+    Else
+
+        gravaLinhaLog ("[DOWNLOAD_INUTILIZACAO_NFCE_STATUS]")
+        gravaLinhaLog (status)
+        
+    End If
+
+    downloadInutilizacaoNFCe = resposta
+End Function
+
+'Esta fun��o realiza o download de eventos de uma NFC-e e salva-os
+Public Function downloadInutilizacaoNFCeESalvar(idInut As String, tpAmb As String, caminho As String) As String
+    Dim xml As String
+    Dim chIdInut As String
+    Dim status As String
+    Dim resposta As String
+    
+    resposta = downloadInutilizacaoNFCe(idInut, tpAmb)
+    status = LerDadosJSON(resposta, "status", "", "")
+
+    If status = "200" Then
+    
+        'Cria o diret�rio, caso n�o exista
+        If Dir(caminho, vbDirectory) = "" Then
+            MkDir (caminho)
+        End If
+        
+        xml = LerDadosJSON(resposta, "retInut", "xml", "")
+        chIdInut = idInut
+        Call salvarXML(xml, caminho, chIdInut, "INUT")
+
+    Else
+        MsgBox ("Ocorreu um erro, veja o Retorno da API para mais informa��es")
+         gravaLinhaLog ("[Ocorreu um erro, veja o Retorno da API para mais informa��es  - Metodo: downloadEventoNFCeESalvar]")
+    End If
+
+    downloadInutilizacaoNFCeESalvar = resposta
+End Function
+
 'Esta fun��o realiza o cancelamento de uma NFC-e
 Public Function cancelarNFCe(chNFe As String, tpAmb As String, dhEvento As String, nProt As String, xJust As String, caminho As String, exibeNaTela As Boolean) As String
     Dim json As String
@@ -427,7 +497,7 @@ Public Sub salvarXML(xml As String, caminho As String, chNFe As String, Optional
     Dim localParaSalvar As String
     Dim extensao As String
     
-    If (tipo = "CANC") Then
+    If (tipo = "CANC") Or (tipo = "INUT") Then
         extensao = "-procEvenNFe.xml"
     Else
         extensao = "-procNFe.xml"
